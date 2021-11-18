@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 final _lista = <String>[];
 final List<String> _saved = <String>[];
+String filter = 'Alla';
 
-void main() => runApp(const MaterialApp(home: StartSidan()));
+void main() => runApp(
+    const MaterialApp(home: StartSidan(), debugShowCheckedModeBanner: false));
 
 class StartSidan extends StatefulWidget {
   const StartSidan({Key? key}) : super(key: key);
@@ -14,15 +16,36 @@ class StartSidan extends StatefulWidget {
 
 //--------------Första sidan!!!
 class _StartSidanState extends State<StartSidan> {
+  final _filtermenu = ['Alla', 'Klar', 'Ej Klar'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          DropdownButton<String>(
+            hint: const Text('Filtrering'),
+            dropdownColor: Colors.grey,
+            icon: const Icon(Icons.more_vert),
+            items: _filtermenu.map((String dropDownStringItem) {
+              return DropdownMenuItem<String>(
+                value: dropDownStringItem,
+                child: Text(dropDownStringItem),
+              );
+            }).toList(),
+            onChanged: (String? newValueSelected) {
+              setState(() {
+                filter = newValueSelected!;
+              });
+            },
+            value: filter,
+          ),
+        ],
         title: const Text('TIG169 Att göra'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.purple,
       ),
-      body: lista(),
+      body: filtrering(filter),
       floatingActionButton: FloatingActionButton(
         //navigator till andra sidan
         child: const Icon(Icons.add),
@@ -39,6 +62,7 @@ class _StartSidanState extends State<StartSidan> {
   }
 
   Widget byggRad(String pair) {
+    //bygg rad till första sidan
     final alreadySaved = _saved.contains(pair);
     return ListTile(
         title: Text(
@@ -71,14 +95,45 @@ class _StartSidanState extends State<StartSidan> {
         });
   }
 
-  Widget lista() {
+  Widget filtrering(String x) {
+    // widget för filtreringsrutan
+    List<String> ejklar = <String>[];
+    switch (x) {
+      case 'Alla':
+        {
+          return lista(_lista);
+        }
+
+      case 'Klar':
+        {
+          return lista(_saved);
+        }
+
+      case 'Ej Klar':
+        {
+          for (int i = 0; i < _lista.length; i++) {
+            if (!_saved.contains(_lista[i])) {
+              ejklar.add(_lista[i]);
+            }
+          }
+          return lista(ejklar);
+        }
+
+      default:
+        {
+          return lista(_lista);
+        }
+    }
+  }
+
+  Widget lista(List<String> filtrering) {
     //ListView/Listan
     return ListView.builder(
         padding: const EdgeInsets.all(16),
         itemBuilder: (BuildContext _context, int i) {
           final index = i;
-          if (index < _lista.length) {
-            return byggRad(_lista[index]);
+          if (index < filtrering.length) {
+            return byggRad(filtrering[index]);
           } else {
             return const Divider(
               color: Colors.white,
@@ -114,6 +169,7 @@ class _AndraSidanState extends State<AndraSidan> {
           title: const Text('Lägg till uppgifter'),
           backgroundColor: Colors.white,
           foregroundColor: Colors.purple,
+          centerTitle: true,
         ),
         body: Column(children: <Widget>[
           Padding(
