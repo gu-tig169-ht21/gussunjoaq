@@ -21,14 +21,14 @@ var nyckel = 'ae1f049c-d87a-4c4f-b79b-18bbfbce6f24';
 
 class Api {
 //send-list anropet
-  static Future<List<ApiTodoObj>> postList(ApiTodoObj test) async {
+  static Future<List<ApiTodoObj>> postList(ApiTodoObj input) async {
     http.Response response = await http.post(
         Uri.parse(
             'https://todoapp-api-pyq5q.ondigitalocean.app/todos?key=ae1f049c-d87a-4c4f-b79b-18bbfbce6f24'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(<String, dynamic>{
-          "title": test.title,
-          "done": test.done,
+          "title": input.title,
+          "done": input.done,
         }));
 
     List<dynamic> parsedList = jsonDecode(response.body);

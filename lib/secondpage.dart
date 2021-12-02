@@ -4,14 +4,14 @@ import 'api.dart';
 final _nameController = TextEditingController();
 
 //-------------------Andra Sidan!!!
-class AndraSidan extends StatefulWidget {
-  const AndraSidan({Key? key}) : super(key: key);
+class SecondPage extends StatefulWidget {
+  const SecondPage({Key? key}) : super(key: key);
 
   @override
-  _AndraSidanState createState() => _AndraSidanState();
+  _SecondPageState createState() => _SecondPageState();
 }
 
-class _AndraSidanState extends State<AndraSidan> {
+class _SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +32,8 @@ class _AndraSidanState extends State<AndraSidan> {
           ElevatedButton(
               child: const Text('Add'),
               onPressed: () {
-                ApiTodoObj test = ApiTodoObj(title: _nameController.text);
-                Api.postList(test);
+                ApiTodoObj input = ApiTodoObj(title: _nameController.text);
+                Api.postList(input);
                 _nameController.clear();
               })
         ]));
