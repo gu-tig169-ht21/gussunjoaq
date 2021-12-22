@@ -126,9 +126,8 @@ class _FirstPageState extends State<FirstPage> {
           icon: const Icon(Icons.delete_outline),
           onPressed: () async {
             await Api.deleteList(obj.id);
-            setState(() {
-              _list.removeWhere((element) => element.id == obj.id);
-            });
+            _list = await Api.getList();
+            setState(() {});
           }),
     );
   }
