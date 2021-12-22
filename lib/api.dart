@@ -1,8 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-List<ApiTodoObj> apiList = <ApiTodoObj>[];
-
 class ApiTodoObj {
   String id, title;
   bool done;
@@ -16,10 +14,9 @@ class ApiTodoObj {
   }
 }
 
-var url = 'https://todoapp-api-pyq5q.ondigitalocean.app';
-var nyckel = 'ae1f049c-d87a-4c4f-b79b-18bbfbce6f24';
-
 class Api {
+  List<ApiTodoObj> apiList = <ApiTodoObj>[];
+
 //send-list anropet
   static Future<List<ApiTodoObj>> postList(ApiTodoObj input) async {
     http.Response response = await http.post(

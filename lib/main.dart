@@ -3,12 +3,6 @@ import 'api.dart';
 import 'secondpage.dart';
 import 'theme.dart';
 
-List<ApiTodoObj> _lista = <ApiTodoObj>[];
-
-String filter = 'All';
-
-Future<List<ApiTodoObj>>? futureApiTodoList;
-
 void main() => runApp(MaterialApp(
     home: const FirstPage(),
     theme: CustomTheme.standardTheme,
@@ -16,8 +10,8 @@ void main() => runApp(MaterialApp(
 
 class _GettingApi {
   Future<List<ApiTodoObj>> apiGet() async {
-    _lista = await Api.getList();
-    return _lista;
+    _FirstPageState._list = await Api.getList();
+    return _FirstPageState._list;
   }
 }
 
@@ -31,6 +25,9 @@ class FirstPage extends StatefulWidget {
 //--------------Första sidan!!!
 class _FirstPageState extends State<FirstPage> {
   final _filtermenu = ['All', 'Done', 'Undone'];
+  static List<ApiTodoObj> _list = <ApiTodoObj>[];
+  String filter = 'All';
+  Future<List<ApiTodoObj>>? futureApiTodoList;
 
   @override
   void initState() {
@@ -101,7 +98,6 @@ class _FirstPageState extends State<FirstPage> {
   Widget byggRad(ApiTodoObj obj) {
     final alreadySaved = obj.done;
 
-    _lista.contains(obj) ? null : _lista.add(obj);
     return ListTile(
       title: Text(
         obj.title,
@@ -115,26 +111,23 @@ class _FirstPageState extends State<FirstPage> {
             : Icons.check_circle_outline_outlined,
         color: alreadySaved ? Colors.green : null,
       ),
-      onTap: () {
-        int index = _lista.indexWhere((item) => item.id == obj.id);
+      onTap: () async {
         if (alreadySaved) {
-          Api.putList(obj.title, false, obj.id);
-          setState(() {
-            _lista[index].done = false;
-          });
+          await Api.putList(obj.title, false, obj.id);
+          _list = await Api.getList();
+          setState(() {});
         } else {
-          Api.putList(obj.title, true, obj.id);
-          setState(() {
-            _lista[index].done = true;
-          });
+          await Api.putList(obj.title, true, obj.id);
+          _list = await Api.getList();
+          setState(() {});
         }
       },
       trailing: IconButton(
           icon: const Icon(Icons.delete_outline),
-          onPressed: () {
-            Api.deleteList(obj.id);
+          onPressed: () async {
+            await Api.deleteList(obj.id);
             setState(() {
-              _lista.removeWhere((element) => element.id == obj.id);
+              _list.removeWhere((element) => element.id == obj.id);
             });
           }),
     );
@@ -143,6 +136,7 @@ class _FirstPageState extends State<FirstPage> {
   //ListView/Listan
   Widget lista(List<ApiTodoObj> filtrering) {
     return ListView.builder(
+        itemCount: filtrering.length,
         padding: const EdgeInsets.all(16),
         itemBuilder: (BuildContext _context, int i) {
           if (i < filtrering.length) {
@@ -160,22 +154,22 @@ class _FirstPageState extends State<FirstPage> {
     switch (x) {
       case 'All':
         {
-          return lista(_lista);
+          return lista(_list);
         }
 
       case 'Done':
         {
-          return lista(_lista.where((todo) => todo.done == true).toList());
+          return lista(_list.where((todo) => todo.done == true).toList());
         }
 
       case 'Undone':
         {
-          return lista(_lista.where((todo) => todo.done == false).toList());
+          return lista(_list.where((todo) => todo.done == false).toList());
         }
 
       default:
         {
-          return lista(_lista);
+          return lista(_list);
         }
     }
   }
