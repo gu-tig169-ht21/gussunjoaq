@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
 
-final _nameController = TextEditingController();
-
 //-------------------Andra Sidan!!!
 class SecondPage extends StatefulWidget {
   const SecondPage({Key? key}) : super(key: key);
@@ -12,6 +10,8 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
+  final _nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,9 +31,9 @@ class _SecondPageState extends State<SecondPage> {
           ),
           ElevatedButton(
               child: const Text('Add'),
-              onPressed: () {
+              onPressed: () async {
                 ApiTodoObj input = ApiTodoObj(title: _nameController.text);
-                Api.postList(input);
+                await Api.postList(input);
                 _nameController.clear();
               })
         ]));
